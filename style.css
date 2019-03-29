@@ -1,0 +1,36 @@
+
+address{
+	text-align: right;
+	margin-right: 20px;
+	margin-top:30px;
+	margin-bottom: 20px;
+}
+h1{
+	text-align: center;
+}
+header{
+	background-color:#f0f8ff
+}
+
+#main{
+	background-color:#c0c0c0
+}
+#footer{
+	background-color:#f8f8ff
+}
+
+html{
+	background-color:#f0ffff
+}
+
+header main footer{
+	margin:30px 0;
+}
+
+canvas{
+	display: block;
+	margin:0 auto;
+	background:#ffffff;
+	width:70%;
+	height: 600px;
+}
