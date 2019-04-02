@@ -8,22 +8,6 @@ var canvas = function(){
 	return mainUi;
 }();
 
-// var snake = {
-// 	body:[new Location(1, 1), new Location(2, 1), new Location(3, 1)],
-// 	head:body[body.length - 1],
-// 	isDie: function(){
-// 		var tempArr = body.slice(0, body.length - 1);
-// 		if (head in tempArr)
-// 			return true;
-// 		if(head.X < 0 || head.X >= colCnt || head.Y < 0 || head.Y >= rowCnt )
-// 			return true;
-// 		return false;
-// 	},
-// 	get isAlive(){
-// 		return !isDie;
-// 	}
-// }
-
 var Snake = function(bodyArr){
 	this.body = bodyArr;
 	this.head = this.body[this.body.length - 1];
@@ -58,32 +42,8 @@ var drawRect = function(rect, color){
 	ctx.fillStyle = color;
 	ctx.fillRect(rect.m_location.X, rect.m_location.Y, rect.m_size.m_width, rect.m_size.m_height);
 };
-// (function drawTest(){
-// 	ctx.strokeStyle = "black";
-// 	//水平线
-// 	ctx.beginPath();
-// 	for(var i = 0; i <= rowCnt; i++)
-// 	{
-// 		var startX = 0;
-// 		var startY = i * cellHeight;
-// 		var endX = canvasWidth;
-// 		var endY = startY;
-// 		ctx.moveTo(startX, startY);
-// 		ctx.lineTo(endX, endY);
-// 		ctx.stroke();
-// 	}
-// 	//竖直线
-// 	for(var i = 0; i <= colCnt; i++)
-// 	{
-// 		var startX = i * cellWidth;
-// 		var startY = 0;
-// 		var endX = startX;
-// 		var endY = canvasHeight;
-// 		ctx.moveTo(startX, startY);
-// 		ctx.lineTo(endX, endY);
-// 		ctx.stroke();
-// 	}
-// }());
+
+
 
 //class location
 function Location(x, y){
@@ -122,8 +82,8 @@ var locToRect = function(location){
 var getRandFoodLoc = function(){
 	var loc;
 	do{
-		var foodX = Math.floor(Math.random() * rowCnt);
-		var foodY = Math.floor(Math.random() * colCnt);
+		var foodX = Math.floor(Math.random() * colCnt);
+		var foodY = Math.floor(Math.random() * rowCnt);
 		loc = new Location(foodX, foodY);
 	} while (loc in snake.body)
 	return loc;
@@ -142,8 +102,3 @@ function init(){
 }
 
 init();
-
-
-
-
-
