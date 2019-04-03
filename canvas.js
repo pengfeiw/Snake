@@ -3,6 +3,8 @@ const colCnt = 35;
 const snakeColor = "#ffa500";
 const foodColor = "#ff0000";
 
+var start = false;
+
 var canvas = function() {
 	var mainUi = document.getElementById('mainUI');
 	return mainUi;
@@ -15,12 +17,11 @@ function addEvent() {
 	// key event - use window as object
 	window.addEventListener('keydown', move, true);
 }
-canvas.addEventListener('keydown', move, true);
-canvas.focus();
-// key event - use window as object
-window.addEventListener('keydown', move, true);
-
-
+addEvent();
+// canvas.addEventListener('keydown', move, true);
+// canvas.focus();
+// // key event - use window as object
+// window.addEventListener('keydown', move, true);
 
 var ctx = canvas.getContext('2d');
 const canvasHeight = canvas.height;
@@ -50,7 +51,9 @@ var Snake = function(bodyArr) {
 	this.head = this.body[this.body.length - 1];
 	this.tail = this.body[0];
 };
+var Direction = Object.freeze({"Top":0, "Right":1, "Down":2, "Left":3});
 Snake.prototype = {
+	direction: Direction.Right,
 	constructor: Snake,
 	isDie: function() {
 		var tempArr = this.body.slice(0, this.body.length - 1);
@@ -61,6 +64,7 @@ Snake.prototype = {
 		return false;
 	},
 	left: function() {
+		this.direction = Direction.Left;
 		for (var i = 0; i < this.body.length - 1; i++) {
 			this.body[i] = this.body[i + 1];
 		}
@@ -70,6 +74,7 @@ Snake.prototype = {
 		}
 	},
 	right: function() {
+		this.direction = Direction.Right;
 		for (var i = 0; i < this.body.length - 1; i++) {
 			this.body[i] = this.body[i + 1];
 		}
@@ -79,6 +84,7 @@ Snake.prototype = {
 		}
 	},
 	top: function() {
+		this.direction = Direction.Top;
 		for (var i = 0; i < this.body.length - 1; i++) {
 			this.body[i] = this.body[i + 1];
 		}
@@ -88,6 +94,7 @@ Snake.prototype = {
 		}
 	},
 	down: function() {
+		this.direction = Direction.Down;
 		for (var i = 0; i < this.body.length - 1; i++) {
 			this.body[i] = this.body[i + 1];
 		}
@@ -105,31 +112,64 @@ function getInitSnake() {
 var snake = getInitSnake();
 
 function move(e) {
+	if(start === false)
+	{
+		start = true;
+		setInterval(AutoMove, 1000);
+	}
 	var keyID = e.keyCode ? e.keyCode : e.which;
 	var keyID = e.keyCode ? e.keyCode : e.which;
 	var oldTailRect = locToRect(snake.body[0]);
 	if (keyID === 38 || keyID === 87) { // up arrow and W
-		snake.top();
+		// snake.top();
+		snake.direction = Direction.Top;
 		e.preventDefault();
 	}
-	if (keyID === 39 || keyID === 68) { // right arrow and D
-		snake.right();
+	else if (keyID === 39 || keyID === 68){ // right arrow and D
+		// snake.right();
+		snake.direction = Direction.Right;
 		e.preventDefault();
 	}
-	if (keyID === 40 || keyID === 83) { // down arrow and S
-		snake.down();
+	else if (keyID === 40 || keyID === 83) { // down arrow and S
+		// snake.down();
+		snake.direction = Direction.Down;
 		e.preventDefault();
 	}
-	if (keyID === 37 || keyID === 65) { // left arrow and A
-		snake.left();
+	else if (keyID === 37 || keyID === 65) { // left arrow and A
+		// snake.left();
+		snake.direction = Direction.Left;
 		e.preventDefault();
 	}
+};
 
-	if (snake.isDie() == false) {
+function AutoMove(){
+	if (start === true)
+	{
+		var oldTailRect = locToRect(snake.body[0]);
+		switch (snake.direction) {
+		case Direction.Top:
+			snake.top();
+		break;
+		case Direction.Right:
+			snake.right();
+		break;
+		case Direction.Down:
+			snake.down();
+		break;
+		case Direction.Left:
+			snake.left();
+		break;
+		default:
+			break;
+	}
+	if (snake.isDie() === false)
+	{
 		clearRects([oldTailRect]);
 		drawRect(locToRect(snake.body[snake.body.length - 1]), snakeColor);
 	}
-};
+	}
+	
+}
 
 
 
