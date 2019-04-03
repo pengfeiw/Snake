@@ -3,6 +3,7 @@ const colCnt = 35;
 const snakeColor = "#ffa500";
 const foodColor = "#ff0000";
 
+var foodLoc;
 var start = false;
 
 var canvas = function() {
@@ -45,6 +46,7 @@ function gameOver() {
 	ctx.fillStyle = "#ff0000"
 	ctx.font = '48px serif';
 	ctx.fillText('Hello world', 10, 50);
+	start = false;
 }
 var Snake = function(bodyArr) {
 	this.body = bodyArr;
@@ -53,12 +55,18 @@ var Snake = function(bodyArr) {
 };
 var Direction = Object.freeze({"Top":0, "Right":1, "Down":2, "Left":3});
 Snake.prototype = {
+	
 	direction: Direction.Right,
 	constructor: Snake,
 	isDie: function() {
 		var tempArr = this.body.slice(0, this.body.length - 1);
-		if (this.head in tempArr)
-			return true;
+		// if (this.head in tempArr)
+		// 	return true;
+		for(partBody in tempArr)
+		{
+			if (this.head.X === tempArr[partBody].X && this.head.Y === tempArr[partBody].Y)
+				return true;
+		}
 		if (this.head.X < 0 || this.head.X >= colCnt || this.head.Y < 0 || this.head.Y >= rowCnt)
 			return true;
 		return false;
@@ -69,6 +77,7 @@ Snake.prototype = {
 			this.body[i] = this.body[i + 1];
 		}
 		this.body[this.body.length - 1] = new Location(this.body[this.body.length - 1].X - 1, this.body[this.body.length - 1].Y);
+		this.head = this.body[this.body.length - 1];		
 		if (this.isDie()) {
 			gameOver();
 		}
@@ -79,6 +88,7 @@ Snake.prototype = {
 			this.body[i] = this.body[i + 1];
 		}
 		this.body[this.body.length - 1] = new Location(this.body[this.body.length - 1].X + 1, this.body[this.body.length - 1].Y);
+		this.head = this.body[this.body.length - 1];		
 		if (this.isDie()) {
 			gameOver();
 		}
@@ -89,6 +99,7 @@ Snake.prototype = {
 			this.body[i] = this.body[i + 1];
 		}
 		this.body[this.body.length - 1] = new Location(this.body[this.body.length - 1].X, this.body[this.body.length - 1].Y - 1);
+		this.head = this.body[this.body.length - 1];		
 		if (this.isDie()) {
 			gameOver();
 		}
@@ -99,6 +110,7 @@ Snake.prototype = {
 			this.body[i] = this.body[i + 1];
 		}
 		this.body[this.body.length - 1] = new Location(this.body[this.body.length - 1].X, this.body[this.body.length - 1].Y + 1);
+		this.head = this.body[this.body.length - 1];		
 		if (this.isDie()) {
 			gameOver();
 		}
@@ -110,12 +122,12 @@ function getInitSnake() {
 }
 
 var snake = getInitSnake();
-
+var time = 150; //控制速度，time越小，速度越快。
 function move(e) {
 	if(start === false)
 	{
 		start = true;
-		setInterval(AutoMove, 1000);
+		setInterval(AutoMove, time);
 	}
 	var keyID = e.keyCode ? e.keyCode : e.which;
 	var keyID = e.keyCode ? e.keyCode : e.which;
@@ -145,33 +157,40 @@ function move(e) {
 function AutoMove(){
 	if (start === true)
 	{
+		var bodyTail = snake.body.slice(0, 1);
 		var oldTailRect = locToRect(snake.body[0]);
 		switch (snake.direction) {
-		case Direction.Top:
-			snake.top();
-		break;
-		case Direction.Right:
-			snake.right();
-		break;
-		case Direction.Down:
-			snake.down();
-		break;
-		case Direction.Left:
-			snake.left();
-		break;
-		default:
+			case Direction.Top:
+				snake.top();
 			break;
-	}
-	if (snake.isDie() === false)
-	{
-		clearRects([oldTailRect]);
-		drawRect(locToRect(snake.body[snake.body.length - 1]), snakeColor);
-	}
+			case Direction.Right:
+				snake.right();
+			break;
+			case Direction.Down:
+				snake.down();
+			break;
+			case Direction.Left:
+				snake.left();
+			break;
+			default:
+				break;
+		}
+		if (snake.isDie() === false)
+		{
+			clearRects([oldTailRect]);
+			if(snake.head.X === foodLoc.X && snake.head.Y === foodLoc.Y)
+			{
+				//do nothing
+				snake.body.unshift(bodyTail);
+				foodLoc = getRandFoodLoc();
+				drawRect(locToRect(foodLoc), foodColor);
+			}
+			drawRect(locToRect(snake.body[snake.body.length - 1]), snakeColor);
+		}
+
 	}
 	
 }
-
-
 
 var drawRect = function(rect, color) {
 	ctx.fillStyle = color;
@@ -224,7 +243,7 @@ var getRandFoodLoc = function() {
 }
 
 function init() {
-	var foodLoc = getRandFoodLoc();
+	foodLoc = getRandFoodLoc();
 	var foodRect = locToRect(foodLoc);
 	drawRect(foodRect, foodColor);
 	for (index in snake.body) {
@@ -233,5 +252,4 @@ function init() {
 		//drawRect(snake.body[index], snakeColor);
 	}
 }
-
 init();
